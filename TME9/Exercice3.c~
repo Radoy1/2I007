@@ -1,0 +1,91 @@
+/* Exercice2.c
+
+   A compiler avec :
+       gcc `pkg-config --cflags gtk+-2.0` \
+          -o Exercice3 Exercice3.c `pkg-config --libs gtk+-2.0`
+ */
+#include <stdlib.h>
+#include <gtk/gtk.h>
+#include <string.h>
+
+/* ?????????? (1) ?????????? */
+typedef struct _qqch{
+  GtkWidget *normal,*unite,*label;
+} QQCH;
+  
+gboolean on_change_normal (GtkRange *range, GtkScrollType scroll,gdouble value,QQCH *qqch);
+gboolean on_change_unite (GtkRange *range, GtkScrollType scroll,gdouble value, QQCH *qqch);
+
+int main (int argc, char *argv[]) {
+  GtkWidget *principale;
+  GtkWidget *vbox;
+  GtkWidget *label, *normal, *unite;
+  
+  QQCH *qqch;
+  qqch = (QQCH*)malloc(sizeof(struct _qqch));
+ 
+  qqch->normal = normal;
+  qqch->unite = unite;
+  qqch->label=label;
+  gtk_init(&argc, &argv);
+
+  /* ?????????? (2) ?????????? */
+  principale = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  vbox       = gtk_vbox_new(TRUE,20);
+  label      = gtk_label_new("0");
+  normal     = gtk_hscale_new_with_range(0,100,1);
+  unite      = gtk_hscale_new_with_range(0,9,1);
+
+  gtk_window_set_title(GTK_WINDOW(principale), "Exercice 3");
+  gtk_container_set_border_width(GTK_CONTAINER(principale), 10);
+  gtk_container_add(GTK_CONTAINER(principale), vbox);
+  g_object_set(vbox, "width-request", 400, "height-request", 200, NULL);
+  gtk_container_add(GTK_CONTAINER(vbox), label);
+  gtk_container_add(GTK_CONTAINER(vbox), normal);
+  gtk_container_add(GTK_CONTAINER(vbox), unite);
+  
+
+  g_signal_connect(principale, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+  printf("etoile\n");
+  g_signal_connect(normal,"change-value",G_CALLBACK(on_change_normal),qqch);
+  printf("aetoile\n");
+  g_signal_connect(unite,"change-value",G_CALLBACK(on_change_unite),qqch);
+  
+  gtk_widget_show_all(principale);
+  
+  qqch = (QQCH*)malloc(sizeof(struct _qqch));
+ 
+  qqch->normal = normal;
+  qqch->unite = unite;
+  qqch->label=label;
+  
+  gtk_main ();
+  return 0;
+}
+
+/* ?????????? (3) ?????????? */
+gboolean on_change_normal (GtkRange *range, GtkScrollType scroll,gdouble value,QQCH *qqch){
+  int i;
+  char *a;
+  i = ((int)value)%10;
+  printf("tout va bien\n");
+  gtk_range_set_value(((GtkRange *)qqch->unite),(gdouble)i);
+  i = (int)gtk_range_get_value((GtkRange *)qqch->normal);
+  printf("tout va bien\n");
+  sprintf(a,"%d",i);
+  printf("aie\n");
+  gtk_label_set_text((GtkLabel *)qqch->label,a);
+}
+gboolean on_change_unite (GtkRange *range, GtkScrollType scroll,gdouble value,QQCH *qqch){
+  int i;
+  char *a;
+  i = (int)gtk_range_get_value((GtkRange *)qqch->normal)-
+    ((int)(gtk_range_get_value((GtkRange *)qqch->normal))%10)+value;
+  
+  gtk_range_set_value(((GtkRange *)qqch->normal),(gdouble)i);
+  i = (int)gtk_range_get_value((GtkRange *)qqch->normal);
+
+  sprintf(a,"%d",i);
+  gtk_label_set_text((GtkLabel *)qqch->label,a);
+}
+

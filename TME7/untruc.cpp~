@@ -1,0 +1,21 @@
+#include "untruc.h"
+
+Untruc::Untruc (const QString texte, QWidget *parent) :
+  QPushButton(texte, parent)
+{
+}
+
+void Untruc::slotSlutAlert ()
+{
+  emit slutalert();
+}
+
+void Untruc::slotDisable (bool disable)
+{
+  this->setEnabled(disable);
+}
+
+void Untruc::slotEnable (bool enable)
+{
+  this->setEnabled(enable);
+}
